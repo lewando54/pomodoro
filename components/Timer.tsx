@@ -14,7 +14,7 @@ export default function Timer(
     const color = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
     const barColor = useThemeColor({ light: lightColor, dark: darkColor }, 'tint');
 
-    const pomodoroCycles = [2, 1, 3, 5, 25, 5, 25, 15];
+    const pomodoroCycles = [25, 5, 25, 5, 25, 5, 25, 15];
 
     const [currentCycle, setCurrentCycle] = useState(0);
 
@@ -52,13 +52,14 @@ export default function Timer(
     const [time, setTime] = useState(60000 * pomodoroCycles[currentCycle]);
 
     const onPress = () => {
-        playTickingSound();
         setIsPlaying(() => true);
 
-        animatedMaskValue.value = withSequence(withTiming(circumference, {duration: 60000 * pomodoroCycles[currentCycle], easing: Easing.linear}), withTiming(2 * circumference, {duration: 1000, easing: Easing.bounce}, () => {
-                runOnJS(setIsPlaying)(false);
-                runOnJS(stopSound)();
+        animatedMaskValue.value = withSequence(withTiming(circumference, {duration: 60000 * pomodoroCycles[currentCycle] - (60000 * pomodoroCycles[currentCycle] - time), easing: Easing.linear}), withTiming(2 * circumference, {duration: 1000, easing: Easing.bounce}, (finished) => {
+            runOnJS(setIsPlaying)(false);
+            runOnJS(stopSound)();
+            if(finished) {
                 runOnJS(setTime)(60000 * pomodoroCycles[(currentCycle + 1) % pomodoroCycles.length]);
+            }
             }
         ));
         setCurrentCycle((prevCycle) => (prevCycle + 1) % pomodoroCycles.length);
@@ -66,6 +67,8 @@ export default function Timer(
 
     function stopTimer() {
         setIsPlaying(false);
+        cancelAnimation(animatedMaskValue);
+        animatedMaskValue.value = 2 * circumference;
         stopSound();
         setTime(60000 * pomodoroCycles[(currentCycle + 1) % pomodoroCycles.length]);
         setCurrentCycle((prevCycle) => (prevCycle + 1) % pomodoroCycles.length);
@@ -73,7 +76,9 @@ export default function Timer(
 
     function pauseTimer() {
         setIsPlaying(false);
+        const currValue = animatedMaskValue.value;
         cancelAnimation(animatedMaskValue);
+        animatedMaskValue.value = currValue;
         stopSound();
         setTime(time);
     }
@@ -81,6 +86,7 @@ export default function Timer(
     useEffect(() => {
         const interval = setInterval(() => {
             if (isPlaying && time > 0) {
+                playTickingSound();
                 setTime((prevTime) => prevTime - 1000);
             }
             else if(time === 0) {
