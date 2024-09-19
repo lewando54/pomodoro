@@ -59,10 +59,10 @@ export default function Timer(
             runOnJS(stopSound)();
             if(finished) {
                 runOnJS(setTime)(60000 * pomodoroCycles[(currentCycle + 1) % pomodoroCycles.length]);
+                runOnJS(setCurrentCycle)((prevCycle) => (prevCycle + 1) % pomodoroCycles.length);
             }
             }
         ));
-        setCurrentCycle((prevCycle) => (prevCycle + 1) % pomodoroCycles.length);
     }
 
     function stopTimer() {
