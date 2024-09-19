@@ -4,7 +4,9 @@ import { ThemedText } from './ThemedText'
 import Svg, { Circle, ClipPath, Defs, Path, Polygon, Rect } from 'react-native-svg'
 import IconButton from './IconButton'
 import { useThemeColor } from '@/hooks/useThemeColor'
-import Animated, { Easing, Extrapolation, interpolate, runOnJS, useAnimatedProps, useSharedValue, withSequence, withTiming } from 'react-native-reanimated'
+import Animated, { cancelAnimation, Easing, runOnJS, useAnimatedProps, useSharedValue, withSequence, withTiming } from 'react-native-reanimated'
+import { Audio } from 'expo-av'
+import { Sound } from 'expo-av/build/Audio'
 
 export default function Timer(
     { lightColor, darkColor }: { lightColor?: string; darkColor?: string }
@@ -12,7 +14,32 @@ export default function Timer(
     const color = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
     const barColor = useThemeColor({ light: lightColor, dark: darkColor }, 'tint');
 
-    const animatedMaskValue = useSharedValue(0);
+    const pomodoroCycles = [2, 1, 3, 5, 25, 5, 25, 15];
+
+    const [currentCycle, setCurrentCycle] = useState(0);
+
+    const [sound, setSound] = useState<Sound>();
+
+    async function playDingSound() {
+        const { sound } = await Audio.Sound.createAsync(require('@/assets/audio/ding.mp3'));
+        setSound(sound);
+        await sound.playAsync();
+    }
+
+    async function playTickingSound() {
+        const { sound } = await Audio.Sound.createAsync(require('@/assets/audio/ticking.mp3'));
+        setSound(sound);
+        await sound.playAsync();
+    }
+
+    async function stopSound() {
+        await sound?.stopAsync();
+    }
+
+    const r = 150;
+    const circumference = 2 * Math.PI * r;
+
+    const animatedMaskValue = useSharedValue(2 * circumference);
 
     const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
@@ -22,43 +49,71 @@ export default function Timer(
 
     const [isPlaying, setIsPlaying] = useState(false);
 
-    const [time, setTime] = useState(10000);
+    const [time, setTime] = useState(60000 * pomodoroCycles[currentCycle]);
 
     const onPress = () => {
+        playTickingSound();
         setIsPlaying(() => true);
-        animatedMaskValue.value = withSequence(withTiming(-1000, {duration: 11000, easing: Easing.linear}), withTiming(0, {duration: 1000, easing: Easing.bounce}, () => {
+
+        animatedMaskValue.value = withSequence(withTiming(circumference, {duration: 60000 * pomodoroCycles[currentCycle], easing: Easing.linear}), withTiming(2 * circumference, {duration: 1000, easing: Easing.bounce}, () => {
                 runOnJS(setIsPlaying)(false);
-                runOnJS(setTime)(10000);
+                runOnJS(stopSound)();
+                runOnJS(setTime)(60000 * pomodoroCycles[(currentCycle + 1) % pomodoroCycles.length]);
             }
         ));
-        console.log(animatedMaskValue.value);
+        setCurrentCycle((prevCycle) => (prevCycle + 1) % pomodoroCycles.length);
+    }
+
+    function stopTimer() {
+        setIsPlaying(false);
+        stopSound();
+        setTime(60000 * pomodoroCycles[(currentCycle + 1) % pomodoroCycles.length]);
+        setCurrentCycle((prevCycle) => (prevCycle + 1) % pomodoroCycles.length);
+    }
+
+    function pauseTimer() {
+        setIsPlaying(false);
+        cancelAnimation(animatedMaskValue);
+        stopSound();
+        setTime(time);
     }
 
     useEffect(() => {
         const interval = setInterval(() => {
-            if (isPlaying) {
+            if (isPlaying && time > 0) {
                 setTime((prevTime) => prevTime - 1000);
+            }
+            else if(time === 0) {
+                playDingSound();
             }
         }, 1000);
 
         return () => clearInterval(interval);
     });
 
+    useEffect(() => {
+        return sound
+          ? () => {
+              sound.unloadAsync();
+            }
+          : undefined;
+      }, [sound]);
+
     return (
         <View style={styles.timerContainer}>
             <Svg height={400} width={400} style={{position: 'absolute', transform: [{rotate: '-90deg'}] }}>
-                <AnimatedCircle r='150' cx="200" cy="200" fill={color}
+                <AnimatedCircle r={r} cx="200" cy="200" fill={color}
                         stroke={barColor}
                         strokeWidth="10"
-                        strokeDasharray={'300%'}
+                        strokeDasharray={circumference}
                         animatedProps={animatedProps}
                 />
             </Svg>
-            <ThemedText style={{fontSize: 24, marginBottom: 20}}>{time / 1000}</ThemedText>
+            <ThemedText style={{fontSize: 24, marginBottom: 20}}>{Math.floor(time / 60000).toFixed(0)}:{(time % 60000 / 1000).toString().padStart(2, '0')}</ThemedText>
             {isPlaying ? 
                 <View style={{flexDirection: 'row'}}>
-                    <IconButton iconSettings={{name: 'pause', size: 40}} onClick={() => setIsPlaying(false)} />
-                    <IconButton iconSettings={{name: 'stop', size: 40}} onClick={() => setIsPlaying(false)} />
+                    <IconButton iconSettings={{name: 'pause', size: 40}} onClick={() => pauseTimer()} />
+                    <IconButton iconSettings={{name: 'stop', size: 40}} onClick={() => stopTimer()} />
                 </View>
                 :
             <IconButton iconSettings={{name: 'play', size: 40}} onClick={onPress} />

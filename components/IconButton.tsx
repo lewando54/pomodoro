@@ -16,7 +16,7 @@ export default function IconButton(
   const color = useThemeColor({ light: lightColor, dark: darkColor }, 'icon');
 
   return (
-    <Pressable onPress={onClick}>
+    <Pressable onPressIn={onClick}>
         <Ionicons {...iconSettings} color={color}></Ionicons>
     </Pressable>
   )
