@@ -32,15 +32,12 @@ export default forwardRef(function Countdown(
         start: () => {
             cancelAnimation(opacity);
             opacity.value = 1;
-            console.log('Starting timer', time);
         },
         pause: () => {
-            console.log('Pausing timer', time);
             opacity.value = withRepeat(withSequence(withDelay(700, withTiming(0, {duration: 0})), withDelay(700, withTiming(1, {duration: 0}))), -1, true);
             stopSound();
         },
         stop: () => {
-            console.log('Stopping timer', time);
             setTime(60000 * pomodoroCycles[(currentCycle + 1) % pomodoroCycles.length]);
             stopSound();
         },

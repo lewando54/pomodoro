@@ -15,7 +15,7 @@ export default function Timer(
     const color = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
     const barColor = useThemeColor({ light: lightColor, dark: darkColor }, 'tint');
 
-    const pomodoroCycles = [2, 1, 2, 1, 25, 5, 25, 15];
+    const pomodoroCycles = [25, 5, 25, 5, 25, 5, 25, 15];
 
     const countdownRef = React.createRef<ICountdownRef>();
 
@@ -52,7 +52,6 @@ export default function Timer(
         countdownRef.current?.start();
         const time = countdownRef.current?.getTime() || 0;
         const calculatedTime = 60000 * pomodoroCycles[currentCycle] - (60000 * pomodoroCycles[currentCycle] - time) + 10000;
-        console.log('Calculated', calculatedTime);
         animatedMaskValue.value = withSequence(withTiming(1, {duration: calculatedTime, easing: Easing.linear}), withTiming(0, {duration: 1000, easing: Easing.bounce}, (finished) => {
             runOnJS(setIsPlaying)(false);
             runOnJS(stopSound)();
