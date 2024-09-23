@@ -17,6 +17,16 @@ export default function SettingsScreen() {
 
   const scheme = useColorScheme();
 
+  const [storageTheme, setStorageTheme] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function getTheme() {
+      const savedTheme = await AsyncStorage.getItem('theme') ?? 'system';
+        setStorageTheme(savedTheme);
+    }
+    getTheme();
+  }, []);
+
   function handleThemeChange(theme: string) {
     if(theme === 'system') {
       setTheme(scheme as Themes);
@@ -24,13 +34,14 @@ export default function SettingsScreen() {
     else {
       setTheme(theme as Themes);
     }
+    setStorageTheme(theme);
     AsyncStorage.setItem('theme', theme);
   }
 
   return (
     <View style={styles.container}>
       <ThemedText>Themes</ThemedText>
-      <ThemeTileList selectedName={theme as string} onChange={(theme) => handleThemeChange(theme as Themes)} />
+      <ThemeTileList selectedName={storageTheme as string} onChange={(theme) => handleThemeChange(theme as Themes)} />
     </View>
   );
 }

@@ -22,21 +22,27 @@ type ThemeProviderProps = PropsWithChildren;
 
 export const AppThemeProvider = ({children}: ThemeProviderProps) => {
 
-    const scheme = useColorScheme() ?? 'light';
-    const [theme, setTheme] = useState<keyof typeof Themes | null | undefined>(scheme);
+    const currentScheme = useColorScheme() ?? 'light';
+    const [scheme , setScheme] = useState<string>(currentScheme);
+    const [theme, setTheme] = useState<keyof typeof Themes | null | undefined>(scheme as keyof typeof Themes);
 
     useEffect(() => {
         async function getTheme() {
         const savedTheme = await AsyncStorage.getItem('theme') ?? 'system';
+        console.log(savedTheme);
         if (savedTheme === 'system') {
-            setTheme('light');
+            setTheme(currentScheme);
         }
         else {
             setTheme(savedTheme as keyof typeof Themes);
         }
         }
         getTheme();
-    }, []);
+    }, [scheme]);
+
+    useEffect(() => {
+        setScheme(currentScheme);
+    }, [currentScheme]);
 
     const themeData = {theme, setTheme};
 
