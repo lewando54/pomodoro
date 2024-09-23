@@ -6,7 +6,7 @@
 const tintColorLight = '#0a7ea4';
 const tintColorDark = '#fff';
 
-export const Colors = {
+export const Colors: {[key in Themes]: {[key in ColorNames]: string}} = {
   light: {
     text: '#11181C',
     background: '#fff',
@@ -23,4 +23,27 @@ export const Colors = {
     tabIconDefault: '#9BA1A6',
     tabIconSelected: tintColorDark,
   },
+  violet: {
+    text: '#ECEDEE',
+    background: '#151718',
+    tint: '#6A0DAD',
+    icon: '#9BA1A6',
+    tabIconDefault: '#9BA1A6',
+    tabIconSelected: '#6A0DAD',
+  }
 };
+
+export enum Themes {
+  light = 'light',
+  dark = 'dark',
+  violet = 'violet',
+}
+
+export enum ColorNames {
+  text = 'text',
+  background = 'background',
+  tint = 'tint',
+  icon = 'icon',
+  tabIconDefault = 'tabIconDefault',
+  tabIconSelected = 'tabIconSelected',
+}

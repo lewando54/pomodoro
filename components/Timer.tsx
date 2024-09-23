@@ -8,12 +8,13 @@ import Animated, { cancelAnimation, Easing, interpolate, runOnJS, useAnimatedPro
 import { Audio } from 'expo-av'
 import { Sound } from 'expo-av/build/Audio'
 import Countdown, { ICountdownRef } from './Countdown'
+import { ColorNames } from '@/constants/Colors'
 
 export default function Timer(
     { lightColor, darkColor }: { lightColor?: string; darkColor?: string }
 ) {
-    const color = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
-    const barColor = useThemeColor({ light: lightColor, dark: darkColor }, 'tint');
+    const color = useThemeColor(ColorNames.background);
+    const barColor = useThemeColor(ColorNames.tint);
 
     const pomodoroCycles = [25, 5, 25, 5, 25, 5, 25, 15];
 

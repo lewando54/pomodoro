@@ -5,9 +5,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withSequence, withTiming } 
 import { Colors } from "react-native/Libraries/NewAppScreen";
 import IconButton from "./IconButton";
 
-export default function CogWheelButton(
-    { lightColor, darkColor }: { lightColor?: string; darkColor?: string }
-) {
+export default function CogWheelButton() {
     const rotationAnimation = useSharedValue(0);
   
     const animatedStyle = useAnimatedStyle(() => ({
