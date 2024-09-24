@@ -1,5 +1,8 @@
 # Pomodoro App
 
+<img width="229" height="209" src="https://github.com/user-attachments/assets/c1e207ea-4205-4c13-abf6-636b960d66d6">
+
+
 This is an [Expo](https://expo.dev) Pomodoro timer application project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app). For now, only released for Android, but that's subject to change.
 
 ## Features
