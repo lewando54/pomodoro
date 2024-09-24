@@ -5,10 +5,13 @@ This is an [Expo](https://expo.dev) Pomodoro timer application project created w
 ## Features
 
 - Full Pomodoro cycle for focused studying with breaks. It consists of 25 minute active sessions followed by 5 minute breaks. When we hit the fourth cycle, the break will last 15 minutes for optimal recovery.
-![time](https://github.com/user-attachments/assets/22604979-4510-4f4a-ac62-d2d1e00c1db6)
-
+<p align="center">
+<img width="209" height="435" src="https://github.com/user-attachments/assets/22604979-4510-4f4a-ac62-d2d1e00c1db6">
+</p>
 - Themes for customizing your Pomodoro experience. For now, there are only 5 themes, but feel free to add/request more! The 'system' theme reacts to the user system setting regarding Dark Mode.
-![themes](https://github.com/user-attachments/assets/4a10bbd6-6368-4b41-8999-7065981c6308)
+<p align="center">
+<img width="209" height="435" src="https://github.com/user-attachments/assets/4a10bbd6-6368-4b41-8999-7065981c6308">
+</p>
 
 ## Get started
 
