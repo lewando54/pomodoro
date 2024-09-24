@@ -56,8 +56,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${SHORT_SHA}
-          release_name: "Release ${SHORT_SHA}"
+          tag_name: ${{ env.SHORT_SHA }}
+          release_name: "Release ${{ env.SHORT_SHA }}"
           draft: false
           prerelease: false
 
