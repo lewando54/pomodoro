@@ -1,25 +1,69 @@
-name: EAS Build
+name: EAS Build and Release APK
+
 on:
   workflow_dispatch:
   push:
     branches:
       - main
+
 jobs:
   build:
-    name: Install and build
+    name: Install and Build
     runs-on: ubuntu-latest
     steps:
+      # Checkout the repository
       - uses: actions/checkout@v4
+
+      # Set up Node.js
       - uses: actions/setup-node@v4
         with:
           node-version: 18.x
           cache: npm
+
+      # Set up Expo and EAS
       - name: Setup Expo and EAS
         uses: expo/expo-github-action@v8
         with:
           eas-version: latest
           token: ${{ secrets.EXPO_TOKEN }}
+
+      # Install dependencies
       - name: Install dependencies
         run: npm ci
+
+      # Build the app on EAS (this starts the build and waits for completion)
       - name: Build on EAS
-        run: eas build -p android --profile preview --non-interactive --no-wait
+        run: eas build -p android --profile preview --non-interactive
+
+      # Get the latest EAS build URL (You need expo-cli to fetch the URL)
+      - name: Get Build URL
+        run: |
+          BUILD_ID=$(eas build:list --platform android --status finished --limit 1 --json | jq -r '.[0].id')
+          APK_URL=$(eas build:view $BUILD_ID --json | jq -r '.artifacts.buildUrl')
+          echo "APK_URL=${APK_URL}" >> $GITHUB_ENV
+
+      # Download the APK
+      - name: Download APK
+        run: |
+          curl -o pomodoro.apk ${{ env.APK_URL }}
+
+      # Create a new release and upload the APK
+      - name: Create GitHub Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.sha }}
+          release_name: "Release ${{ github.sha }}"
+          draft: false
+          prerelease: false
+
+      # Upload the APK to the GitHub release
+      - name: Upload APK to Release
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./pomodoro.apk
+          asset_name: pomodoro.apk
+          asset_content_type: application/vnd.android.package-archive
