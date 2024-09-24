@@ -29,7 +29,6 @@ export const AppThemeProvider = ({children}: ThemeProviderProps) => {
     useEffect(() => {
         async function getTheme() {
         const savedTheme = await AsyncStorage.getItem('theme') ?? 'system';
-        console.log(savedTheme);
         if (savedTheme === 'system') {
             setTheme(currentScheme);
         }
