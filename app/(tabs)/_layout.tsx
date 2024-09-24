@@ -9,7 +9,7 @@ function calculateColorBrightness(color: string) {
   const r = parseInt(color.substring(1, 2), 16);
   const g = parseInt(color.substring(3, 2), 16);
   const b = parseInt(color.substring(5, 2), 16);
-
+  console.log((r * 299 + g * 587 + b * 114) / 1000);
   return (r * 299 + g * 587 + b * 114) / 1000;
 }
 

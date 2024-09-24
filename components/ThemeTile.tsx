@@ -1,41 +1,39 @@
-import { ColorNames } from '@/constants/Colors'
+import { ColorNames, ThemeNamesDict, Themes, ThemesIconSettings, ThemesWSystem } from '@/constants/Colors'
 import React from 'react'
 import { View, StyleSheet, Pressable } from 'react-native'
 import { ThemedText } from './ThemedText'
+import { LinearGradient } from 'expo-linear-gradient'
+import { Theme } from '@react-navigation/native'
 
 export default function ThemeTile(
-    { name, colors, selected, onPress }: {name: string, colors: {[key in ColorNames]: string}, selected?: boolean, onPress: () => void}
+    { name, colors, selected, onPress }: {name: ThemesWSystem, colors: {[key in ColorNames]: string}, selected?: boolean, onPress: () => void}
 ) {
   return (
-    <Pressable style={[styles.wrapper, {borderColor: selected ? '#F00' : 'transparent'}]} onPress={onPress}>
-        <View style={styles.boxesWrapper}>
-            {Object.keys(colors).map((color) => {
-                return <View key={color} style={[styles.box, {backgroundColor: colors[color as ColorNames]}]} />
-            })}
+    <Pressable style={[styles.wrapper]} onPress={onPress}>
+        <View style={[styles.circleWrapper, {borderColor: selected ? '#4269ff' : 'transparent'}]}>
+            <LinearGradient style={[styles.circle]} {...ThemesIconSettings[name]}>
+            </LinearGradient>
         </View>
-        <ThemedText>{name}</ThemedText>
+        <ThemedText style={{textAlign: 'center'}}>{ThemeNamesDict[name]}</ThemedText>
     </Pressable>
   )
 }
 
 const styles = StyleSheet.create({
-    box: {
-        width: 20,
-        height: 20,
+    circle: {
+        width: 70,
+        height: 70,
+        borderRadius: 120,
     },
-    boxesWrapper: {
-        flex: 1,
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        width: 60,
+    circleWrapper: {
+        borderRadius: 120,
+        borderWidth: 4,
     },
     wrapper: {
-        flex: 1,
         flexDirection: 'column',
-        gap: 60,
-        width: 75,
+        gap: 10,
+        width: 70,
         alignItems: 'center',
-        borderWidth: 2,
         borderRadius: 15,
     }
 });

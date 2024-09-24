@@ -1,4 +1,4 @@
-import { Colors, Themes } from '@/constants/Colors'
+import { Colors, Themes, ThemesWSystem } from '@/constants/Colors'
 import React from 'react'
 import ThemeTile from './ThemeTile'
 import { StyleSheet, useColorScheme, View } from 'react-native'
@@ -11,7 +11,7 @@ export default function ThemeTileList(
   const scheme = useColorScheme();
 
   const themeTiles = Object.keys(Themes).map((theme) => 
-      <ThemeTile name={theme} key={theme} colors={Colors[theme as keyof typeof Colors]} selected={theme === selectedName} onPress={() => onChange(theme)} />
+      <ThemeTile name={theme as ThemesWSystem} key={theme} colors={Colors[theme as keyof typeof Colors]} selected={theme === selectedName} onPress={() => onChange(theme)} />
   );
 
   themeTiles.unshift(
@@ -31,6 +31,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     width: '100%',
-    gap: 30,
+    gap: 24,
   }
 });
