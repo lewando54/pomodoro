@@ -38,8 +38,8 @@ jobs:
       # Get the latest EAS build URL (You need expo-cli to fetch the URL)
       - name: Get Build URL
         run: |
-          BUILD_ID=$(eas build:list --platform android --status finished --limit 1 --json | jq -r '.[0].id')
-          APK_URL=$(eas build:view $BUILD_ID --json | jq -r '.artifacts.buildUrl')
+          BUILD_ID=$(eas build:list --platform android --status finished --limit 1 --json --non-interactive | jq -r '.[0].id')
+          APK_URL=$(eas build:view $BUILD_ID --json --non-interactive | jq -r '.artifacts.buildUrl')
           echo "APK_URL=${APK_URL}" >> $GITHUB_ENV
 
       # Download the APK
