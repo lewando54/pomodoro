@@ -43,9 +43,9 @@ jobs:
           echo "APK_URL=${APK_URL}" >> $GITHUB_ENV
 
       # Download the APK
-      - name: Download APK
+      - name: Download APK with Verbose Output
         run: |
-          curl -o pomodoro.apk ${{ env.APK_URL }}
+          curl -L -o pomodoro.apk "${{ env.APK_URL }}" --verbose
 
       # Create a new release and upload the APK
       - name: Add SHORT_SHA env property with commit short sha
