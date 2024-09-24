@@ -32,8 +32,8 @@ jobs:
         run: npm ci
 
       # Build the app on EAS (this starts the build and waits for completion)
-      #- name: Build on EAS
-      #  run: eas build -p android --profile preview --non-interactive
+      - name: Build on EAS
+        run: eas build -p android --profile preview --non-interactive
 
       # Get the latest EAS build URL (You need expo-cli to fetch the URL)
       - name: Get Build URL
@@ -57,7 +57,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ env.SHORT_SHA }}
-          release_name: "Release ${{ env.SHORT_SHA }}"
+          release_name: "Pomodoro - ${{ env.SHORT_SHA }}"
           draft: false
           prerelease: false
 
